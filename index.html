@@ -509,16 +509,16 @@
         function renderGradeSidebar() {
             const container = document.getElementById('grade-pill-container');
             let html = `
-                <button onclick="setGradeFilter('ALL')" class="w-full text-left px-4 py-2.5 rounded-xl text-xl font-bold transition flex items-center justify-between ${currentGradeFilter === 'ALL' ? 'bg-blue-600 text-white shadow-md' : 'text-slate-300 hover:bg-slate-800 hover:text-white'}">
-                    <span>All Grades (1-12)</span>
+                <button onclick="setGradeFilter('ALL')" class="w-full text-left px-3.5 py-2 rounded-xl text-lg font-bold transition flex items-center justify-between ${currentGradeFilter === 'ALL' ? 'bg-blue-600 text-white shadow-md' : 'text-slate-300 hover:bg-slate-800 hover:text-white'}">
+                    <span>All Grades (4-12)</span>
                 </button>
             `;
 
-            for (let i = 1; i <= 12; i++) {
+            for (let i = 4; i <= 12; i++) {
                 let gradeKey = `GR${i < 10 ? '0' + i : i}`;
                 let isSelected = currentGradeFilter === gradeKey;
                 html += `
-                    <button onclick="setGradeFilter('${gradeKey}')" class="w-full text-left px-4 py-2.5 rounded-xl text-2xl font-extrabold transition flex items-center justify-between ${isSelected ? 'bg-blue-600 text-white shadow-md' : 'text-slate-300 hover:bg-slate-800 hover:text-white'}">
+                    <button onclick="setGradeFilter('${gradeKey}')" class="w-full text-left px-3.5 py-1.5 rounded-xl text-lg font-bold transition flex items-center justify-between ${isSelected ? 'bg-blue-600 text-white shadow-md' : 'text-slate-300 hover:bg-slate-800 hover:text-white'}">
                         <span>Grade ${i}</span>
                     </button>
                 `;
