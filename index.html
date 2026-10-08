@@ -103,37 +103,62 @@
         .print-only { display: none; }
     </style>
 </head>
-<body class="h-full text-slate-800 antialiased bg-slate-100 dark:bg-slate-900 dark:text-slate-100 flex flex-col md:flex-row min-h-screen">
+<body class="h-full text-slate-800 antialiased bg-slate-100 dark:bg-slate-900 dark:text-slate-100 flex flex-col md:flex-row min-h-screen relative overflow-x-hidden">
 
-    <!-- Left Sidebar Navigation -->
-    <aside class="no-print w-full md:w-72 bg-slate-900 text-slate-300 flex-shrink-0 flex flex-col justify-between border-r border-slate-800 shadow-xl">
-        <div class="p-5 flex flex-col h-full">
+    <!-- Mobile Header Bar (Visible on Small Screens) -->
+    <header class="no-print md:hidden bg-slate-900 text-white px-4 py-3 flex items-center justify-between border-b border-slate-800 sticky top-0 z-30 shadow-md">
+        <div class="flex items-center space-x-3">
+            <div class="w-9 h-9 bg-blue-600 rounded-lg flex items-center justify-center text-white font-extrabold text-sm shadow">
+                AR
+            </div>
+            <div>
+                <h1 class="font-bold text-sm leading-tight text-white">Al Rowad Intl School</h1>
+                <p class="text-[10px] text-blue-400 font-medium">Boys Section Roster</p>
+            </div>
+        </div>
+        <button onclick="toggleMobileMenu()" class="p-2 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 flex items-center justify-center">
+            <i data-lucide="menu" id="mobile-menu-icon" class="w-5 h-5"></i>
+        </button>
+    </header>
+
+    <!-- Mobile Drawer Overlay Backdrop -->
+    <div id="sidebar-backdrop" onclick="toggleMobileMenu()" class="no-print fixed inset-0 bg-slate-950/70 backdrop-blur-sm z-40 hidden md:hidden transition-opacity duration-300"></div>
+
+    <!-- Left Sidebar Navigation / Mobile Sliding Drawer -->
+    <aside id="app-sidebar" class="no-print fixed md:static inset-y-0 left-0 z-50 w-72 max-w-[85vw] bg-slate-900 text-slate-300 flex-shrink-0 flex flex-col justify-between border-r border-slate-800 shadow-2xl md:shadow-xl transform -translate-x-full md:translate-x-0 transition-transform duration-300 ease-in-out h-full">
+        <div class="p-4 md:p-5 flex flex-col h-full overflow-y-auto custom-scrollbar">
             <!-- School Header / Logo Branding -->
-            <div class="pb-5 border-b border-slate-800 flex items-center space-x-3">
-                <div class="w-11 h-11 bg-blue-600 rounded-xl flex items-center justify-center text-white shadow-lg shadow-blue-600/30 font-extrabold text-xl">
-                    AR
+            <div class="pb-4 border-b border-slate-800 flex items-center justify-between">
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 md:w-11 md:h-11 bg-blue-600 rounded-xl flex items-center justify-center text-white shadow-lg shadow-blue-600/30 font-extrabold text-lg md:text-xl">
+                        AR
+                    </div>
+                    <div>
+                        <h1 class="font-bold text-white leading-snug text-sm md:text-base">Al Rowad Intl</h1>
+                        <p class="text-xs text-blue-400 font-medium">Boys Section Roster</p>
+                    </div>
                 </div>
-                <div>
-                    <h1 class="font-bold text-white leading-snug text-base">Al Rowad International School</h1>
-                    <p class="text-xs text-blue-400 font-medium">Boys Section Roster</p>
-                </div>
+                <!-- Close Button on Mobile Drawer -->
+                <button onclick="toggleMobileMenu()" class="md:hidden p-1.5 text-slate-400 hover:text-white rounded-lg">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
             </div>
 
             <!-- Sidebar Navigation Controls -->
-            <div class="mt-6 space-y-5 flex-1 overflow-y-auto custom-scrollbar pr-1">
+            <div class="mt-5 space-y-4 md:space-y-5 flex-1 pr-1">
                 
                 <!-- Search Box -->
                 <div>
-                    <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Search</label>
+                    <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1.5">Search</label>
                     <div class="relative">
-                        <i data-lucide="search" class="w-4 h-4 absolute left-3 top-3 text-slate-500"></i>
+                        <i data-lucide="search" class="w-4 h-4 absolute left-3 top-2.5 text-slate-500"></i>
                         <input type="text" id="search-input" oninput="renderApp()" placeholder="Filter Section..." class="w-full pl-9 pr-3 py-2 bg-slate-800 border border-slate-700 rounded-xl text-xs text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500">
                     </div>
                 </div>
 
                 <!-- Program Filter -->
                 <div>
-                    <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Program</label>
+                    <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1.5">Program</label>
                     <select id="filter-programme" onchange="renderApp()" class="w-full px-3 py-2 bg-slate-800 border border-slate-700 text-white rounded-xl text-xs font-medium focus:outline-none focus:ring-2 focus:ring-blue-500">
                         <option value="ALL">All Programs</option>
                         <option value="Qur'an">Qur'an Program</option>
@@ -147,11 +172,11 @@
 
                 <!-- Grade Filter List -->
                 <div>
-                    <div class="flex items-center justify-between mb-3">
+                    <div class="flex items-center justify-between mb-2">
                         <label class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Grade Level</label>
-                        <span id="filtered-count-badge" class="text-xs bg-blue-900/80 text-blue-300 font-medium px-2.5 py-1 rounded-full">All</span>
+                        <span id="filtered-count-badge" class="text-xs bg-blue-900/80 text-blue-300 font-medium px-2 py-0.5 rounded-full">All</span>
                     </div>
-                    <div class="space-y-1.5" id="grade-pill-container">
+                    <div class="grid grid-cols-2 md:grid-cols-1 gap-1.5" id="grade-pill-container">
                         <!-- Grade Pills (1-12) rendered via JS -->
                     </div>
                 </div>
@@ -160,7 +185,7 @@
 
             <!-- Quick Action Buttons at Sidebar Bottom -->
             <div class="pt-4 mt-auto border-t border-slate-800 space-y-2">
-                <button onclick="window.print()" class="w-full py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold rounded-xl flex items-center justify-center gap-2 shadow-lg shadow-blue-600/20 transition">
+                <button onclick="window.print()" class="w-full py-2.5 bg-blue-600 hover:bg-blue-700 active:scale-[0.98] text-white text-xs font-semibold rounded-xl flex items-center justify-center gap-2 shadow-lg shadow-blue-600/20 transition">
                     <i data-lucide="printer" class="w-4 h-4"></i>
                     <span>Print Official Roster</span>
                 </button>
@@ -179,7 +204,7 @@
     </aside>
 
     <!-- Main Content Area -->
-    <main class="main-content-wrapper flex-1 p-4 md:p-8 overflow-y-auto">
+    <main class="main-content-wrapper flex-1 p-3 sm:p-5 md:p-8 overflow-y-auto min-w-0">
 
         <!-- Printable Letterhead Header (Only displays during print) -->
         <div class="print-only print-header">
@@ -198,62 +223,62 @@
         </div>
 
         <!-- On-Screen Page Banner -->
-        <div class="no-print mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 bg-white dark:bg-slate-800 p-6 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm">
+        <div class="no-print mb-4 sm:mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 bg-white dark:bg-slate-800 p-4 sm:p-6 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm">
             <div>
-                <span class="text-xs font-bold uppercase tracking-wider text-blue-600 dark:text-blue-400">Boys Section Portal</span>
-                <h2 class="text-2xl font-extrabold text-slate-900 dark:text-white mt-0.5">Student Count Directory</h2>
-                <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Active student numbers for Grade 1 through Grade 12</p>
+                <span class="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-blue-600 dark:text-blue-400">Boys Section Portal</span>
+                <h2 class="text-xl sm:text-2xl font-extrabold text-slate-900 dark:text-white mt-0.5">Student Count Directory</h2>
+                <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Active student numbers for Grade 1 through Grade 12</p>
             </div>
-            <div class="text-xs text-slate-500 bg-slate-50 dark:bg-slate-900 px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 font-medium">
+            <div class="text-xs text-slate-500 bg-slate-50 dark:bg-slate-900 px-3 py-2 sm:px-4 sm:py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 font-medium self-start sm:self-auto">
                 Academic Year: <span class="font-bold text-slate-800 dark:text-slate-200">2026 - 2027</span>
             </div>
         </div>
 
         <!-- Key Summary Stat Cards -->
-        <div class="no-print grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
-            <div class="bg-white dark:bg-slate-800 p-5 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm flex items-center justify-between">
+        <div class="no-print grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4 mb-4 sm:mb-6">
+            <div class="bg-white dark:bg-slate-800 p-4 sm:p-5 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm flex items-center justify-between">
                 <div>
-                    <p class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Total Active Boys</p>
-                    <h3 id="stat-total-students" class="text-3xl font-extrabold text-blue-600 dark:text-blue-400 mt-1">0</h3>
+                    <p class="text-[11px] sm:text-xs font-semibold text-slate-500 uppercase tracking-wider">Total Active Boys</p>
+                    <h3 id="stat-total-students" class="text-2xl sm:text-3xl font-extrabold text-blue-600 dark:text-blue-400 mt-1">0</h3>
                 </div>
-                <div class="p-3 bg-blue-50 dark:bg-blue-900/40 text-blue-600 dark:text-blue-300 rounded-2xl">
-                    <i data-lucide="user-check" class="w-6 h-6"></i>
+                <div class="p-2.5 sm:p-3 bg-blue-50 dark:bg-blue-900/40 text-blue-600 dark:text-blue-300 rounded-2xl">
+                    <i data-lucide="user-check" class="w-5 h-5 sm:w-6 sm:h-6"></i>
                 </div>
             </div>
 
-            <div class="bg-white dark:bg-slate-800 p-5 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm flex items-center justify-between">
+            <div class="bg-white dark:bg-slate-800 p-4 sm:p-5 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm flex items-center justify-between">
                 <div>
-                    <p class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Active Boys Sections</p>
-                    <h3 id="stat-total-classes" class="text-3xl font-extrabold text-slate-800 dark:text-slate-100 mt-1">0</h3>
+                    <p class="text-[11px] sm:text-xs font-semibold text-slate-500 uppercase tracking-wider">Active Sections</p>
+                    <h3 id="stat-total-classes" class="text-2xl sm:text-3xl font-extrabold text-slate-800 dark:text-slate-100 mt-1">0</h3>
                 </div>
-                <div class="p-3 bg-indigo-50 dark:bg-indigo-900/40 text-indigo-600 dark:text-indigo-300 rounded-2xl">
-                    <i data-lucide="layout-grid" class="w-6 h-6"></i>
+                <div class="p-2.5 sm:p-3 bg-indigo-50 dark:bg-indigo-900/40 text-indigo-600 dark:text-indigo-300 rounded-2xl">
+                    <i data-lucide="layout-grid" class="w-5 h-5 sm:w-6 sm:h-6"></i>
                 </div>
             </div>
 
-            <div class="bg-white dark:bg-slate-800 p-5 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm flex items-center justify-between">
+            <div class="bg-white dark:bg-slate-800 p-4 sm:p-5 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm flex items-center justify-between">
                 <div>
-                    <p class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Avg Class Size</p>
-                    <h3 id="stat-avg-size" class="text-3xl font-extrabold text-emerald-600 dark:text-emerald-400 mt-1">0</h3>
+                    <p class="text-[11px] sm:text-xs font-semibold text-slate-500 uppercase tracking-wider">Avg Class Size</p>
+                    <h3 id="stat-avg-size" class="text-2xl sm:text-3xl font-extrabold text-emerald-600 dark:text-emerald-400 mt-1">0</h3>
                 </div>
-                <div class="p-3 bg-emerald-50 dark:bg-emerald-900/40 text-emerald-600 dark:text-emerald-300 rounded-2xl">
-                    <i data-lucide="users" class="w-6 h-6"></i>
+                <div class="p-2.5 sm:p-3 bg-emerald-50 dark:bg-emerald-900/40 text-emerald-600 dark:text-emerald-300 rounded-2xl">
+                    <i data-lucide="users" class="w-5 h-5 sm:w-6 sm:h-6"></i>
                 </div>
             </div>
         </div>
 
         <!-- Clean 3-Column Display Table -->
         <div class="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm overflow-hidden">
-            <div class="overflow-x-auto">
-                <table class="w-full text-left border-collapse">
+            <div class="overflow-x-auto custom-scrollbar">
+                <table class="w-full text-left border-collapse min-w-[320px]">
                     <thead>
-                        <tr class="bg-slate-100/90 dark:bg-slate-700/60 text-slate-600 dark:text-slate-300 text-xs font-bold uppercase tracking-wider border-b border-slate-200 dark:border-slate-700">
-                            <th class="py-4 px-6">Grade + Section</th>
-                            <th class="py-4 px-6">Program</th>
-                            <th class="py-4 px-6 text-right">Number of students</th>
+                        <tr class="bg-slate-100/90 dark:bg-slate-700/60 text-slate-600 dark:text-slate-300 text-[11px] sm:text-xs font-bold uppercase tracking-wider border-b border-slate-200 dark:border-slate-700">
+                            <th class="py-3 px-4 sm:py-4 sm:px-6">Grade + Section</th>
+                            <th class="py-3 px-4 sm:py-4 sm:px-6">Program</th>
+                            <th class="py-3 px-4 sm:py-4 sm:px-6 text-right">Students</th>
                         </tr>
                     </thead>
-                    <tbody id="class-table-body" class="divide-y divide-slate-100 dark:divide-slate-700/60 text-sm">
+                    <tbody id="class-table-body" class="divide-y divide-slate-100 dark:divide-slate-700/60 text-xs sm:text-sm">
                         <!-- Rendered via JavaScript -->
                     </tbody>
                 </table>
@@ -286,21 +311,21 @@
     </main>
 
     <!-- Modal 1: Copy / Export Formatted List -->
-    <div id="modal-export" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4 no-print">
-        <div class="bg-white dark:bg-slate-800 rounded-2xl max-w-lg w-full shadow-2xl border border-slate-200 dark:border-slate-700 overflow-hidden">
-            <div class="px-6 py-4 bg-slate-50 dark:bg-slate-700/50 border-b border-slate-200 dark:border-slate-700 flex justify-between items-center">
+    <div id="modal-export" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center hidden p-3 sm:p-4 no-print">
+        <div class="bg-white dark:bg-slate-800 rounded-2xl max-w-lg w-full shadow-2xl border border-slate-200 dark:border-slate-700 overflow-hidden flex flex-col max-h-[90vh]">
+            <div class="px-5 py-3.5 bg-slate-50 dark:bg-slate-700/50 border-b border-slate-200 dark:border-slate-700 flex justify-between items-center flex-shrink-0">
                 <div>
-                    <h3 class="font-bold text-slate-800 dark:text-slate-100 text-base">Boys Section Formatted List</h3>
-                    <p class="text-xs text-slate-500">Output: Grade 4A (Number of Students)</p>
+                    <h3 class="font-bold text-slate-800 dark:text-slate-100 text-sm sm:text-base">Boys Section Formatted List</h3>
+                    <p class="text-[11px] text-slate-500">Output: Grade 4A (Number of Students)</p>
                 </div>
-                <button onclick="closeModal('modal-export')" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200">
+                <button onclick="closeModal('modal-export')" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 p-1">
                     <i data-lucide="x" class="w-5 h-5"></i>
                 </button>
             </div>
 
-            <div class="p-6 space-y-4">
+            <div class="p-4 sm:p-6 space-y-4 overflow-y-auto">
                 <div>
-                    <textarea id="export-text-area" readonly rows="12" class="w-full font-mono text-sm p-3.5 bg-slate-900 text-emerald-400 rounded-xl focus:outline-none custom-scrollbar leading-relaxed"></textarea>
+                    <textarea id="export-text-area" readonly rows="10" class="w-full font-mono text-xs sm:text-sm p-3 bg-slate-900 text-emerald-400 rounded-xl focus:outline-none custom-scrollbar leading-relaxed"></textarea>
                 </div>
 
                 <div id="copy-toast" class="hidden text-xs font-semibold text-emerald-600 dark:text-emerald-400 flex items-center gap-1.5">
@@ -308,9 +333,9 @@
                     <span>Copied list to clipboard!</span>
                 </div>
 
-                <div class="pt-2 flex items-center justify-end space-x-3">
-                    <button type="button" onclick="closeModal('modal-export')" class="px-4 py-2 text-sm text-slate-600 dark:text-slate-300 font-medium hover:bg-slate-100 dark:hover:bg-slate-700 rounded-xl">Close</button>
-                    <button type="button" onclick="copyExportToClipboard()" class="px-4 py-2 text-sm bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-xl shadow flex items-center gap-1.5">
+                <div class="pt-2 flex items-center justify-end space-x-3 flex-shrink-0">
+                    <button type="button" onclick="closeModal('modal-export')" class="px-4 py-2 text-xs sm:text-sm text-slate-600 dark:text-slate-300 font-medium hover:bg-slate-100 dark:hover:bg-slate-700 rounded-xl">Close</button>
+                    <button type="button" onclick="copyExportToClipboard()" class="px-4 py-2 text-xs sm:text-sm bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-xl shadow flex items-center gap-1.5">
                         <i data-lucide="copy" class="w-4 h-4"></i>
                         <span>Copy Text</span>
                     </button>
@@ -320,34 +345,34 @@
     </div>
 
     <!-- Modal 2: Bulk Import Modal -->
-    <div id="modal-bulk-import" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4 no-print">
-        <div class="bg-white dark:bg-slate-800 rounded-2xl max-w-xl w-full shadow-2xl border border-slate-200 dark:border-slate-700 overflow-hidden">
-            <div class="px-6 py-4 bg-slate-50 dark:bg-slate-700/50 border-b border-slate-200 dark:border-slate-700 flex justify-between items-center">
+    <div id="modal-bulk-import" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center hidden p-3 sm:p-4 no-print">
+        <div class="bg-white dark:bg-slate-800 rounded-2xl max-w-xl w-full shadow-2xl border border-slate-200 dark:border-slate-700 overflow-hidden flex flex-col max-h-[90vh]">
+            <div class="px-5 py-3.5 bg-slate-50 dark:bg-slate-700/50 border-b border-slate-200 dark:border-slate-700 flex justify-between items-center flex-shrink-0">
                 <div>
-                    <h3 class="font-bold text-slate-800 dark:text-slate-100 text-base">Bulk Data Import</h3>
-                    <p class="text-xs text-slate-500">Paste text/table rows for Grade 1 through Grade 12</p>
+                    <h3 class="font-bold text-slate-800 dark:text-slate-100 text-sm sm:text-base">Bulk Data Import</h3>
+                    <p class="text-[11px] text-slate-500">Paste text/table rows for Grade 1 through Grade 12</p>
                 </div>
-                <button onclick="closeModal('modal-bulk-import')" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200">
+                <button onclick="closeModal('modal-bulk-import')" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 p-1">
                     <i data-lucide="x" class="w-5 h-5"></i>
                 </button>
             </div>
 
-            <div class="p-6 space-y-4">
+            <div class="p-4 sm:p-6 space-y-4 overflow-y-auto">
                 <div>
                     <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1.5">Paste table rows below:</label>
-                    <textarea id="bulk-paste-area" rows="8" placeholder="Format example:&#10;GR04 - BA-2627  Qur'an  22&#10;GR04 - BB-2627  Normal  17" class="w-full font-mono text-xs p-3 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-600 rounded-xl focus:ring-2 focus:ring-blue-500"></textarea>
+                    <textarea id="bulk-paste-area" rows="7" placeholder="Format example:&#10;GR04 - BA-2627  Qur'an  22&#10;GR04 - BB-2627  Normal  17" class="w-full font-mono text-xs p-3 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-600 rounded-xl focus:ring-2 focus:ring-blue-500"></textarea>
                 </div>
 
-                <div class="pt-3 flex items-center justify-end space-x-3">
-                    <button type="button" onclick="closeModal('modal-bulk-import')" class="px-4 py-2 text-sm text-slate-600 dark:text-slate-300 font-medium hover:bg-slate-100 dark:hover:bg-slate-700 rounded-xl">Cancel</button>
-                    <button type="button" onclick="processBulkImport()" class="px-4 py-2 text-sm bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-xl shadow">Import Data</button>
+                <div class="pt-2 flex items-center justify-end space-x-3 flex-shrink-0">
+                    <button type="button" onclick="closeModal('modal-bulk-import')" class="px-4 py-2 text-xs sm:text-sm text-slate-600 dark:text-slate-300 font-medium hover:bg-slate-100 dark:hover:bg-slate-700 rounded-xl">Cancel</button>
+                    <button type="button" onclick="processBulkImport()" class="px-4 py-2 text-xs sm:text-sm bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-xl shadow">Import Data</button>
                 </div>
             </div>
         </div>
     </div>
 
     <script>
-        // Data strictly representing Boys active student counts (Grade 4 & Grade 5)
+        // Data strictly representing Boys active student counts
         let classList = [
             // Grade 4
             { batch: "GR04 - BA-2627", programme: "Qur'an", count: 22 },
@@ -463,6 +488,23 @@
         let currentGradeFilter = 'ALL';
 
         /**
+         * Toggle Mobile Drawer Navigation
+         */
+        function toggleMobileMenu() {
+            const sidebar = document.getElementById('app-sidebar');
+            const backdrop = document.getElementById('sidebar-backdrop');
+            
+            const isClosed = sidebar.classList.contains('-translate-x-full');
+            if (isClosed) {
+                sidebar.classList.remove('-translate-x-full');
+                backdrop.classList.remove('hidden');
+            } else {
+                sidebar.classList.add('-translate-x-full');
+                backdrop.classList.add('hidden');
+            }
+        }
+
+        /**
          * Converts batch code like "GR04 - BA-2627" or "GR11 - BA-IG-2627-ASL" to "Grade 11A"
          */
         function parseBoysBatchCode(batchCode) {
@@ -509,7 +551,7 @@
         function renderGradeSidebar() {
             const container = document.getElementById('grade-pill-container');
             let html = `
-                <button onclick="setGradeFilter('ALL')" class="w-full text-left px-3.5 py-2 rounded-xl text-lg font-bold transition flex items-center justify-between ${currentGradeFilter === 'ALL' ? 'bg-blue-600 text-white shadow-md' : 'text-slate-300 hover:bg-slate-800 hover:text-white'}">
+                <button onclick="setGradeFilter('ALL')" class="col-span-2 md:col-span-1 w-full text-left px-3 py-1.5 md:py-2 rounded-xl text-xs md:text-sm font-bold transition flex items-center justify-between ${currentGradeFilter === 'ALL' ? 'bg-blue-600 text-white shadow-md' : 'text-slate-300 hover:bg-slate-800 hover:text-white'}">
                     <span>All Grades (4-12)</span>
                 </button>
             `;
@@ -518,7 +560,7 @@
                 let gradeKey = `GR${i < 10 ? '0' + i : i}`;
                 let isSelected = currentGradeFilter === gradeKey;
                 html += `
-                    <button onclick="setGradeFilter('${gradeKey}')" class="w-full text-left px-3.5 py-1.5 rounded-xl text-lg font-bold transition flex items-center justify-between ${isSelected ? 'bg-blue-600 text-white shadow-md' : 'text-slate-300 hover:bg-slate-800 hover:text-white'}">
+                    <button onclick="setGradeFilter('${gradeKey}')" class="w-full text-left px-3 py-1.5 rounded-xl text-xs md:text-sm font-bold transition flex items-center justify-between ${isSelected ? 'bg-blue-600 text-white shadow-md' : 'text-slate-300 hover:bg-slate-800 hover:text-white'}">
                         <span>Grade ${i}</span>
                     </button>
                 `;
@@ -530,6 +572,13 @@
             currentGradeFilter = grade;
             renderGradeSidebar();
             renderApp();
+            // Automatically close mobile menu when a filter is tapped
+            if (window.innerWidth < 768) {
+                const sidebar = document.getElementById('app-sidebar');
+                if (!sidebar.classList.contains('-translate-x-full')) {
+                    toggleMobileMenu();
+                }
+            }
         }
 
         function renderApp() {
@@ -575,7 +624,7 @@
                 return true;
             });
 
-            document.getElementById('filtered-count-badge').innerText = `${filtered.length} Sections`;
+            document.getElementById('filtered-count-badge').innerText = `${filtered.length} Secs`;
 
             const tbody = document.getElementById('class-table-body');
             const emptyState = document.getElementById('empty-state');
@@ -594,27 +643,27 @@
                 
                 let progBadge = '';
                 if (item.programme === "Qur'an") {
-                    progBadge = `<span class="print-badge px-2.5 py-1 text-xs font-semibold bg-amber-50 text-amber-700 border border-amber-200 dark:bg-amber-900/30 dark:text-amber-300 dark:border-amber-800 rounded-lg">Qur'an</span>`;
+                    progBadge = `<span class="print-badge px-2 sm:px-2.5 py-0.5 sm:py-1 text-[11px] sm:text-xs font-semibold bg-amber-50 text-amber-700 border border-amber-200 dark:bg-amber-900/30 dark:text-amber-300 dark:border-amber-800 rounded-lg">Qur'an</span>`;
                 } else if (item.programme === "IGCSE") {
-                    progBadge = `<span class="print-badge px-2.5 py-1 text-xs font-semibold bg-purple-50 text-purple-700 border border-purple-200 dark:bg-purple-900/30 dark:text-purple-300 dark:border-purple-800 rounded-lg">IGCSE</span>`;
+                    progBadge = `<span class="print-badge px-2 sm:px-2.5 py-0.5 sm:py-1 text-[11px] sm:text-xs font-semibold bg-purple-50 text-purple-700 border border-purple-200 dark:bg-purple-900/30 dark:text-purple-300 dark:border-purple-800 rounded-lg">IGCSE</span>`;
                 } else if (item.programme === "SAT") {
-                    progBadge = `<span class="print-badge px-2.5 py-1 text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200 dark:bg-emerald-900/30 dark:text-emerald-300 dark:border-emerald-800 rounded-lg">SAT</span>`;
+                    progBadge = `<span class="print-badge px-2 sm:px-2.5 py-0.5 sm:py-1 text-[11px] sm:text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200 dark:bg-emerald-900/30 dark:text-emerald-300 dark:border-emerald-800 rounded-lg">SAT</span>`;
                 } else if (item.programme === "AS(SCI)" || item.programme === "A2(SCI)" || item.programme.includes("AS") || item.programme.includes("A2")) {
-                    progBadge = `<span class="print-badge px-2.5 py-1 text-xs font-semibold bg-cyan-50 text-cyan-700 border border-cyan-200 dark:bg-cyan-900/30 dark:text-cyan-300 dark:border-cyan-800 rounded-lg">${item.programme}</span>`;
+                    progBadge = `<span class="print-badge px-2 sm:px-2.5 py-0.5 sm:py-1 text-[11px] sm:text-xs font-semibold bg-cyan-50 text-cyan-700 border border-cyan-200 dark:bg-cyan-900/30 dark:text-cyan-300 dark:border-cyan-800 rounded-lg">${item.programme}</span>`;
                 } else {
-                    progBadge = `<span class="print-badge px-2.5 py-1 text-xs font-semibold bg-slate-100 text-slate-600 border border-slate-200 dark:bg-slate-700 dark:text-slate-300 dark:border-slate-600 rounded-lg">${item.programme || 'Normal'}</span>`;
+                    progBadge = `<span class="print-badge px-2 sm:px-2.5 py-0.5 sm:py-1 text-[11px] sm:text-xs font-semibold bg-slate-100 text-slate-600 border border-slate-200 dark:bg-slate-700 dark:text-slate-300 dark:border-slate-600 rounded-lg">${item.programme || 'Normal'}</span>`;
                 }
 
                 rowsHtml += `
                     <tr class="hover:bg-slate-50/80 dark:hover:bg-slate-700/30 transition">
-                        <td class="py-3.5 px-6 font-bold text-slate-900 dark:text-slate-100 text-base">
+                        <td class="py-2.5 px-4 sm:py-3.5 sm:px-6 font-bold text-slate-900 dark:text-slate-100 text-sm sm:text-base whitespace-nowrap">
                             ${parsed.formattedLabel}
                         </td>
-                        <td class="py-3.5 px-6">
+                        <td class="py-2.5 px-4 sm:py-3.5 sm:px-6">
                             ${progBadge}
                         </td>
-                        <td class="py-3.5 px-6 text-right">
-                            <span class="inline-block px-3 py-1 text-sm font-bold text-blue-700 bg-blue-50 border border-blue-200 dark:bg-blue-950 dark:text-blue-300 dark:border-blue-800 rounded-xl">
+                        <td class="py-2.5 px-4 sm:py-3.5 sm:px-6 text-right">
+                            <span class="inline-block px-2.5 sm:px-3 py-0.5 sm:py-1 text-xs sm:text-sm font-bold text-blue-700 bg-blue-50 border border-blue-200 dark:bg-blue-950 dark:text-blue-300 dark:border-blue-800 rounded-xl">
                                 ${item.count}
                             </span>
                         </td>
